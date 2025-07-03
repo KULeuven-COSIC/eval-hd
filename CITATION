@@ -1,0 +1,15 @@
+@inproceedings{10.1145/3736731.3746155,
+author = {De Meulemeester, Jesse and Norga, Quinten and Piessens, Frank and Verbauwhede, Ingrid and Bognar, Marton},
+title = {Hardware Cost Evaluation in Systems Security},
+year = {2025},
+isbn = {9798400719585},
+publisher = {Association for Computing Machinery},
+address = {New York, NY, USA},
+url = {https://doi.org/10.1145/3736731.3746155},
+doi = {10.1145/3736731.3746155},
+booktitle = {ACM Conference on Reproducibility and Replicability (ACM REP '25), July 29--31, 2025, Vancouver, BC, Canada},
+numpages = {5},
+keywords = {Hardware Evaluation, Replicability},
+location = {Vancouver, BC, Canada},
+series = {ACM REP '25}
+}

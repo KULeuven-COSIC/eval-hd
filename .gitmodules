@@ -1,0 +1,6 @@
+[submodule "yosys"]
+	path = yosys
+	url = https://github.com/YosysHQ/yosys.git
+[submodule "freepdk-45nm"]
+	path = freepdk-45nm
+	url = https://github.com/mflowgen/freepdk-45nm
