@@ -15,7 +15,7 @@ The artifact is described in our paper 'Hardware Cost Evaluation in Systems Secu
 ### Cloning the Repository
 To ensure all required libraries (git sub-modules) are included and downloaded, use:
 ```shell
-git clone --recurse-submodules https://github.com/qnorga1/asic-eval.git
+git clone --recurse-submodules https://github.com/KULeuven-COSIC/eval-hd.git
 ```
 
 ### Installing yosys
