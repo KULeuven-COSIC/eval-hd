@@ -1,6 +1,6 @@
 # EVAL-HD
 This repository contains an artifact for evaluating the cost of hardware implementations, using an open-source, ASIC-based toolchain.\
-The artifact is described in our paper 'Hardware Cost Evaluation in Systems Security' [[DOI]](https://doi.org/10.1145/3736731.3746155).
+The artifact is described in our paper 'Hardware Cost Evaluation in Systems Security' ([DOI](https://doi.org/10.1145/3736731.3746155), [preprint](https://mici.hu/papers/demeulemeester25hardwarecost.pdf)).
 
 ## :file_folder: Contents
 - [yosys](https://github.com/YosysHQ/yosys): (open-source) RTL synthesis tool
