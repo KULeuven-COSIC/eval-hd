@@ -91,7 +91,7 @@ Now, synthesize the target design into a flattened ASIC netlist:
 yosys/yosys timing_asic.ys
 ```
 
-If the (flattened) netlist does not meet the timing constraint, a warning will appear in the log messages:
+If the (flattened) netlist does not meet the timing constraint, a warning will appear in the log messages (Step 13.1.1. Executing ABC.):
 ```shell
 ABC: Cannot meet the target required times (X picoseconds). Continue anyway.
 ```
