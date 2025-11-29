@@ -1,0 +1,17 @@
+name: Build test
+on: [push, pull_request]
+
+jobs:
+  ci-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v2
+        with:
+          submodules: 'recursive'
+
+      - name: Install dependencies
+        run: python3 -m venv .venv && . .venv/bin/activate && pip install -r requirements.txt
+
+      - name: Run EVAL-HD example
+        run: . .venv/bin/activate && ./eval-hd.py examples/core-ami-static.v --report-timing --timing-target 1500
