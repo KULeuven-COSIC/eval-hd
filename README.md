@@ -34,7 +34,7 @@ Most of the functionality can be configured using the parameters of the `eval-hd
 
 ```shell
 $ ./eval-hd.py --help
-usage: eval-hd.py [-h] [--top_module TOP_MODULE] [--cell-library CELL_LIBRARY] [--report-timing] [--timing-target TIMING_TARGET] design_file
+usage: eval-hd.py [-h] [--top-module TOP_MODULE] [--cell-library CELL_LIBRARY] [--report-timing] [--timing-target TIMING_TARGET] design_file
 
 Synthesize a design for ASIC using Yosys.
 
@@ -43,13 +43,13 @@ positional arguments:
 
 options:
   -h, --help            show this help message and exit
-  --top_module TOP_MODULE
-                        Name of the top module.
+  --top-module TOP_MODULE
+                        Name of the top module (default: Core).
   --cell-library CELL_LIBRARY
-                        Path to the cell library.
+                        Path to the cell library (default: FreePDK).
   --report-timing       Enable timing analysis during synthesis.
   --timing-target TIMING_TARGET
-                        Target timing constraint (in picoseconds).
+                        Target timing constraint (in picoseconds, default: 2500).
 
 $ ./eval-hd.py examples/core-ami-static.v --report-timing --timing-target 1500
 [...]
@@ -61,10 +61,15 @@ The script synthesizes the target design into an ASIC netlist and displays ASIC 
 
 Additionally, if the `--report-timing` flag is set, the critical path of the design can be determined.
 If the (flattened) netlist does not meet the timing constraint, a warning will appear in the log messages (Step 13.1.1. Executing ABC.):
+
 ```shell
 ABC: Cannot meet the target required times (X picoseconds). Continue anyway.
 ```
+
 One can relax the constraint and repeat, until the constraint is met.
+
+Alternatively, the `find-timing.py` script can be used to automatically find the lowest possible timing constraint.
+For more information, see `./find-timing.py --help`.
 
 ## :book: Bibliography
 

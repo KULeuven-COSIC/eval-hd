@@ -44,7 +44,7 @@ def run_analysis(report_timing: bool, design_file: str, top_module: str, timing_
 def main() -> None:
     parser = argparse.ArgumentParser(description="Synthesize a design for ASIC using Yosys.")
     parser.add_argument("design_file", type=str, help="Path to the Verilog design file.")
-    parser.add_argument("--top_module", type=str, default="Core", help="Name of the top module (default: Core).")
+    parser.add_argument("--top-module", type=str, default="Core", help="Name of the top module (default: Core).")
     parser.add_argument("--cell-library", default="freepdk-45nm/stdcells.lib", help="Path to the cell library (default: FreePDK).")
     parser.add_argument("--report-timing", action="store_true", help="Enable timing analysis during synthesis.")
     parser.add_argument("--timing-target", type=int, default=2500, help="Target timing constraint (in picoseconds, default: 2500).")
