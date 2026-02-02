@@ -1,3 +1,6 @@
 [submodule "freepdk-45nm"]
 	path = freepdk-45nm
 	url = https://github.com/mflowgen/freepdk-45nm
+[submodule "OpenROAD-flow-scripts"]
+	path = OpenROAD-flow-scripts
+	url = https://github.com/The-OpenROAD-Project/OpenROAD-flow-scripts.git
