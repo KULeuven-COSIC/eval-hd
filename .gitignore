@@ -1,5 +1,6 @@
 # Verilog
 synth.v
+result.v 
 
 # Other
 *.bin
