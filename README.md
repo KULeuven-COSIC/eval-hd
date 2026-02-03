@@ -71,6 +71,58 @@ One can relax the constraint and repeat, until the constraint is met.
 Alternatively, the `find-timing.py` script can be used to automatically find the lowest possible timing constraint.
 For more information, see `./find-timing.py --help`.
 
+## OpenROAD
+Install OpenROAD Flow Scripts (ORFS), as described in their [documentation](https://github.com/The-OpenROAD-Project/OpenROAD-flow-scripts?tab=readme-ov-file#tool-installation).
+
+Export path variables accordingly:
+```shell
+export OPENROAD_EXE=$(command -v openroad)
+export YOSYS_EXE=$(command -v yosys)
+```
+
+Copy verilog sources to `OpenROAD-flow-scripts/flow/designs/src/`.
+For example, create directory `OpenROAD-flow-scripts/flow/designs/proteus_libra/` and copy sources.
+
+Select a target node (`PLATFORM`): sky130hd, sky130hs, nangate45 or asap7. Navigate to the appropriate directory and create directory. For example:
+
+```shell
+cd OpenROAD-flow-scripts/flow/designs/nangate45/libra/
+```
+
+and copy the `config.mk` and `constraint.sdc` file, after setting the appropriate variables in both.
+
+Change directory to:
+```shell
+cd OpenROAD-flow-scripts/flow/
+```
+
+and make using:
+```shell
+make DESIGN_CONFIG=./designs/PLATFORM/DESIGN/config.mk
+```
+with `nangate45` as `PLATFORM` and `proteus_libra` as `DESIGN`.
+
+Timing and power results can be found in:
+
+```shell
+OpenROAD-flow-scripts/flow/reports/PLATFORM/DESIGN/base/6_finish.rpt
+```
+
+Synthesized area can be found in
+```shell
+OpenROAD-flow-scripts/flow/reports/PLATFORM/DESIGN/base/synth_stat.txt
+```
+
+Post place+route area can be found in:
+```shell
+OpenROAD-flow-scripts/flow/logs/PLATFORM/DESIGN/base/6_report.log
+```
+
+Clean with:
+```shell
+make clean_all
+```
+
 ## :book: Bibliography
 
 If you use or build upon the code in this repository, please cite our paper using our [citation key](CITATION).
