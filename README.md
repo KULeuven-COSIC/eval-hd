@@ -120,7 +120,7 @@ OpenROAD-flow-scripts/flow/logs/PLATFORM/DESIGN/base/6_report.log
 
 Clean with:
 ```shell
-make clean_all
+make clean_all DESIGN_CONFIG=./designs/PLATFORM/DESIGN/config.mk
 ```
 
 ## :book: Bibliography
