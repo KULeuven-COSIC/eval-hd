@@ -1,56 +1,75 @@
 #!/usr/bin/env python3
 
-from pyosys import libyosys as ys
 import argparse
+import subprocess
+import re
 
-def run_analysis(report_timing: bool, design_file: str, top_module: str, timing_target: int, cell_library: str) -> None:
-    design = ys.Design()
 
-    # read design
-    ys.run_pass(f"read_verilog {design_file}", design)
+def run_with_timing(design_file: str, top_module: str, target: int, cell_library: str) -> bool:
+    timing_success = True
 
-    # elaborate design hierarchy
-    ys.run_pass(f"hierarchy -check -top {top_module}", design)
+    result = subprocess.run([
+        "./yosys-bridge.py",
+        design_file,
+        "--report-timing",
+        "--timing-target", str(target),
+        "--top-module", top_module,
+        "--cell-library", cell_library
+    ], capture_output=True, text=True)
 
-    if report_timing:
-        # flatten the design
-        ys.run_pass("flatten", design)
-
-    # the high-level stuff
-    ys.run_pass("proc; opt; fsm; opt; memory; opt", design)
-
-    # mapping to internal cell library
-    ys.run_pass("techmap; opt", design)
-
-    # mapping flip-flops to cell library
-    ys.run_pass(f"dfflibmap -liberty {cell_library}", design)
-
-    if report_timing:
-        # mapping logic to cell library with timing constraint
-        ys.run_pass(f"abc -liberty {cell_library} -fast -D {timing_target}", design)
+    trs = re.search(
+        r"Cannot meet the target required times \((\d+.\d+)\). Continue anyway.", result.stdout)
+    if trs:
+        timing = float(trs.group(1))
+        print(f"Timing failed ({target} ps)")
+        timing_success = False
     else:
-        # mapping logic to cell library
-        ys.run_pass(f"abc -liberty {cell_library}", design)
+        print(
+            f"Timing met: {target} ps = {target / 1000} ns = {1 / (target / 1000000):.2f} MHz")
+        rs = re.search(
+            r"Chip area for module \'\\Core\': (\d+.\d+)", result.stdout)
+        if rs:
+            area = float(rs.group(1))
+            print(f"Area = {area:.2f} µm² = {(area / 1000000):.4f} mm²")
+        else:
+            print("Failed to parse area measurement.")
 
-    # cleanup
-    ys.run_pass("clean", design)
+    return timing_success
 
-    # write synthesized design
-    ys.run_pass("write_verilog result.v", design)
 
-    # get ASIC gate count and area numbers
-    ys.run_pass(f"stat -liberty {cell_library}", design)
+def naive_search(design_file: str, top_module: str, maximum_target: int, cell_library: str) -> bool:
+    successful_target = maximum_target
+    success = False
+
+    print(f"Starting timing search up to {maximum_target} ps...")
+
+    for step in [1000, 100, 10, 1]:
+        for target in range(successful_target - 9 * step, successful_target, step):
+            success = run_with_timing(
+                design_file, top_module, target, cell_library)
+            if success:
+                successful_target = target
+                break
+
+    return success
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Synthesize a design for ASIC using Yosys.")
-    parser.add_argument("design_file", type=str, help="Path to the Verilog design file.")
-    parser.add_argument("--top-module", type=str, default="Core", help="Name of the top module (default: Core).")
-    parser.add_argument("--cell-library", default="freepdk-45nm/stdcells.lib", help="Path to the cell library (default: FreePDK).")
+    parser = argparse.ArgumentParser(
+        description="Find the area and the shortest critical path for a design with EVAL-HD.")
+    parser.add_argument("design_file", type=str,
+                        help="Path to the Verilog design file.")
+    parser.add_argument("--top-module", type=str, default="Core",
+                        help="Name of the top module (default: Core).")
+    parser.add_argument("--cell-library", default="freepdk-45nm/stdcells.lib",
+                        help="Path to the cell library (default: FreePDK).")
     parser.add_argument("--report-timing", action="store_true", help="Enable timing analysis during synthesis.")
     parser.add_argument("--timing-target", type=int, default=2500, help="Target timing constraint (in picoseconds, default: 2500).")
+    parser.add_argument("--maximum-target", type=int, default=12000,
+                        help="Maximum timing constraint (in picoseconds, default: 12000).")
     args = parser.parse_args()
 
-    run_analysis(args.report_timing, args.design_file, args.top_module, args.timing_target, args.cell_library)
+    naive_search(args.design_file, args.top_module, args.maximum_target, args.cell_library)
+
 
 if __name__ == "__main__":
     main()
