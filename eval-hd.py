@@ -61,14 +61,20 @@ def main() -> None:
     parser.add_argument("--top-module", type=str, default="Core",
                         help="Name of the top module (default: Core).")
     parser.add_argument("--cell-library", default="freepdk-45nm/stdcells.lib",
-                        help="Path to the cell library (default: FreePDK).")
-    parser.add_argument("--report-timing", action="store_true", help="Enable timing analysis during synthesis.")
-    parser.add_argument("--timing-target", type=int, default=2500, help="Target timing constraint (in picoseconds, default: 2500).")
-    parser.add_argument("--maximum-target", type=int, default=12000,
-                        help="Maximum timing constraint (in picoseconds, default: 12000).")
+                        help="Path to the cell library (default: freepdk-45nm/stdcells.lib).")
+    parser.add_argument("--maximum-target", type=int,
+                        help="Maximum timing constraint (in picoseconds).")
     args = parser.parse_args()
 
-    naive_search(args.design_file, args.top_module, args.maximum_target, args.cell_library)
+    if args.maximum_target is not None:
+        naive_search(args.design_file, args.top_module, args.maximum_target, args.cell_library)
+    else:
+        subprocess.run([
+            "./yosys-bridge.py",
+            args.design_file,
+            "--top-module", args.top_module,
+            "--cell-library", args.cell_library
+        ], text=True)
 
 
 if __name__ == "__main__":

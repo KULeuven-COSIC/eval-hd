@@ -34,9 +34,9 @@ Most of the functionality can be configured using the parameters of the `eval-hd
 
 ```shell
 $ ./eval-hd.py --help
-usage: eval-hd.py [-h] [--top-module TOP_MODULE] [--cell-library CELL_LIBRARY] [--report-timing] [--timing-target TIMING_TARGET] design_file
+usage: eval-hd.py [-h] [--top-module TOP_MODULE] [--cell-library CELL_LIBRARY] [--maximum-target MAXIMUM_TARGET] design_file
 
-Synthesize a design for ASIC using Yosys.
+Find the area and the shortest critical path for a design with EVAL-HD.
 
 positional arguments:
   design_file           Path to the Verilog design file.
@@ -46,30 +46,39 @@ options:
   --top-module TOP_MODULE
                         Name of the top module (default: Core).
   --cell-library CELL_LIBRARY
-                        Path to the cell library (default: FreePDK).
-  --report-timing       Enable timing analysis during synthesis.
-  --timing-target TIMING_TARGET
-                        Target timing constraint (in picoseconds, default: 2500).
+                        Path to the cell library (default: freepdk-45nm/stdcells.lib).
+  --maximum-target MAXIMUM_TARGET
+                        Maximum timing constraint (in picoseconds).
 
-$ ./eval-hd.py examples/core-ami-static.v --report-timing --timing-target 1500
+$ ./eval-hd.py examples/core-ami-static.v --maximum-target 11000
+Starting timing search up to 11000 ps...
+Timing met: 2000 ps = 2.0 ns = 500.00 MHz
+Area = 50168.93 µm² = 0.0502 mm²
+Timing failed (1100 ps)
 [...]
+Timing failed (1992 ps)
+Timing met: 1993 ps = 1.993 ns = 501.76 MHz
+Area = 50210.16 µm² = 0.0502 mm²
 ```
 
 For additional configuration, such as using SystemVerilog or multiple source files, it is recommended to modify the script directly.
 
 The script synthesizes the target design into an ASIC netlist and displays ASIC area numbers [\mu m^2].
 
-Additionally, if the `--report-timing` flag is set, the critical path of the design can be determined.
+Additionally, if the `--maximum-target` flag is set, the critical path of the design can be determined.
 If the (flattened) netlist does not meet the timing constraint, a warning will appear in the log messages (Step 13.1.1. Executing ABC.):
 
 ```shell
 ABC: Cannot meet the target required times (X picoseconds). Continue anyway.
 ```
 
-One can relax the constraint and repeat, until the constraint is met.
+The script will then automatically relax the constraint and repeat until the constraint is met.
 
-Alternatively, the `find-timing.py` script can be used to automatically find the lowest possible timing constraint.
-For more information, see `./find-timing.py --help`.
+## :hourglass_flowing_sand: Version history
+
+- `v0.3`: Refactored interface
+- `v0.2`: Switch to `pyosys` and addition of the timing search
+- `v0.1`: Initial release
 
 ## :book: Bibliography
 
