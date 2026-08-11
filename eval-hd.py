@@ -5,7 +5,7 @@ import subprocess
 import re
 
 
-def run_with_timing(design_file: str, top_module: str, target: int, cell_library: str) -> bool:
+def run_with_timing(design_file: str, top_module: str, target: int, cell_library: str, logging: bool) -> bool:
     timing_success = True
 
     result = subprocess.run([
@@ -34,10 +34,14 @@ def run_with_timing(design_file: str, top_module: str, target: int, cell_library
         else:
             print("Failed to parse area measurement.")
 
+    if logging:
+        with open(f"eval_output_{target}.txt", 'wt') as f:
+            f.write(result.stdout)
+
     return timing_success
 
 
-def naive_search(design_file: str, top_module: str, maximum_target: int, cell_library: str) -> bool:
+def naive_search(design_file: str, top_module: str, maximum_target: int, cell_library: str, logging: bool) -> bool:
     successful_target = maximum_target
     success = False
 
@@ -46,7 +50,7 @@ def naive_search(design_file: str, top_module: str, maximum_target: int, cell_li
     for step in [1000, 100, 10, 1]:
         for target in range(successful_target - 9 * step, successful_target, step):
             success = run_with_timing(
-                design_file, top_module, target, cell_library)
+                design_file, top_module, target, cell_library, logging)
             if success:
                 successful_target = target
                 break
@@ -62,12 +66,14 @@ def main() -> None:
                         help="Name of the top module (default: Core).")
     parser.add_argument("--cell-library", default="freepdk-45nm/stdcells.lib",
                         help="Path to the cell library (default: freepdk-45nm/stdcells.lib).")
+    parser.add_argument("--logging", action="store_true",
+                        help="Log full Yosys output in text files.")
     parser.add_argument("--maximum-target", type=int,
                         help="Maximum timing constraint (in picoseconds).")
     args = parser.parse_args()
 
     if args.maximum_target is not None:
-        naive_search(args.design_file, args.top_module, args.maximum_target, args.cell_library)
+        naive_search(args.design_file, args.top_module, args.maximum_target, args.cell_library, args.logging)
     else:
         subprocess.run([
             "./yosys-bridge.py",
