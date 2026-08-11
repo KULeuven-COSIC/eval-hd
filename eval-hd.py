@@ -27,7 +27,7 @@ def run_with_timing(design_file: str, top_module: str, target: int, cell_library
         print(
             f"Timing met: {target} ps = {target / 1000} ns = {1 / (target / 1000000):.2f} MHz")
         rs = re.search(
-            r"Chip area for module \'\\Core\': (\d+.\d+)", result.stdout)
+            r"Chip area for module \'\\" + top_module + r"\': (\d+.\d+)", result.stdout)
         if rs:
             area = float(rs.group(1))
             print(f"Area = {area:.2f} µm² = {(area / 1000000):.4f} mm²")
