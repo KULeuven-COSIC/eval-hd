@@ -17,6 +17,10 @@ def run_with_timing(design_file: str, top_module: str, target: int, cell_library
         "--cell-library", cell_library
     ], capture_output=True, text=True)
 
+    if logging:
+        with open(f"eval_output_{target}.txt", 'wt') as f:
+            f.write(result.stdout)
+
     trs = re.search(
         r"Cannot meet the target required times \((\d+.\d+)\). Continue anyway.", result.stdout)
     if trs:
@@ -24,19 +28,18 @@ def run_with_timing(design_file: str, top_module: str, target: int, cell_library
         print(f"Timing failed ({target} ps)")
         timing_success = False
     else:
-        print(
-            f"Timing met: {target} ps = {target / 1000} ns = {1 / (target / 1000000):.2f} MHz")
         rs = re.search(
             r"Chip area for module \'\\" + top_module + r"\': (\d+.\d+)", result.stdout)
         if rs:
             area = float(rs.group(1))
             print(f"Area = {area:.2f} µm² = {(area / 1000000):.4f} mm²")
+            print(
+                f"Timing met: {target} ps = {target / 1000} ns = {1 / (target / 1000000):.2f} MHz")
         else:
             print("Failed to parse area measurement.")
-
-    if logging:
-        with open(f"eval_output_{target}.txt", 'wt') as f:
-            f.write(result.stdout)
+            print("This likely indicates an error, it is recommended to run the script with --logging and examine the output.")
+            print("Exiting!")
+            exit(1)
 
     return timing_success
 

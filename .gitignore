@@ -1,6 +1,9 @@
 # Verilog
 synth.v
-result.v 
+result.v
 
 # Other
 *.bin
+
+# logging outputs
+eval_output_*.txt
