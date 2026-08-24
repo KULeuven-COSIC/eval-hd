@@ -47,6 +47,7 @@ def run_with_timing(design_file: str, top_module: str, target: int, cell_library
 def naive_search(design_file: str, top_module: str, maximum_target: int, cell_library: str, logging: bool) -> bool:
     successful_target = maximum_target
     success = False
+    any_failed = False
 
     print(f"Starting timing search up to {maximum_target} ps...")
 
@@ -57,6 +58,11 @@ def naive_search(design_file: str, top_module: str, maximum_target: int, cell_li
             if success:
                 successful_target = target
                 break
+            else:
+                any_failed = True
+
+    if not any_failed:
+        print("No timing measurement failed. It is recommended to configure a lower maximum target to find the shortest critical path.")
 
     return success
 
